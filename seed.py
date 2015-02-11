@@ -2,23 +2,28 @@ import model
 import csv
 from datetime import datetime
 
+
+
+#-------------------------#
+# populate Users table
+#-------------------------#
 # def load_users(session):
 def load_users(filepath):
     # get a session started
     session = model.connect()
 
-    #  email and password not in data set
     # use u.user for ID, age, zip
-    with open(filepath, 'rb') as csvfile:
+    # email and password not in data set
+    with open(filepath, 'rb') as u_file:
         # open a file
-        user_data = csv.reader(csvfile, delimiter='|')
+        user_data = csv.reader(u_file, delimiter='|')
         # read a line
         for row in user_data:
             # parse a line
             user_id = row[0]
             user_age = row[1] 
             user_zip = row[4]
-            # create an object
+            # create an object with the given seed data
             this_user_object = model.User(id = user_id, age = user_age, zipcode = user_zip)
             # add the object in THIS row to a session
             session.add(this_user_object)
@@ -26,28 +31,34 @@ def load_users(filepath):
         session.commit()
 
 ##testing: call user function here:
-load_users("./seed_data/u.user")
+# load_users("./seed_data/u.user")
 
+
+#-------------------------#
+# populate Movies table
+#-------------------------#
 #def load_movies(session):
 def load_movies(filepath):
     # get a session started, yo.
     session = model.connect()
 
     # use u.item
-    with open(filepath, 'rb') as csvfile:
+    with open(filepath, 'rb') as m_file:
         # open a file
-        movie_data = csv.reader(csvfile, delimiter='|')
+        movie_data = csv.reader(m_file, delimiter='|')
         # read a line
         for row in movie_data:
             # parse a line
             movie_id = row[0]
-            title = row[1] # TODO: remove date from movie title
+            """
+            TODO: remove date from movie title
+            """            
+            title = row[1]
             title = title.decode("latin-1")
             imdb_url = row[4]
 
             # get date, with conditional for blank entries in data
             release_date_string = row [2]
-            # release_date_string = release_date_string.decode("latin-1")
             # print "release_date_string: ", release_date_string, "\n"
             if release_date_string == "":
                 print "no date found"
@@ -58,20 +69,23 @@ def load_movies(filepath):
                 release_date = datetime.strptime(release_date_string, "%d-%b-%Y")
             # print "release_date: ", release_date
 
-        #     # create an object
-            this_movie_object = model.Movie(id = movie_id, name = title, release = release_date, imdb_url= imdb_url)
+            # create an object with the given seed data
+            this_movie_object = model.Movie(id = movie_id, movie_title = title, release = release_date, imdb_url= imdb_url)
 
             # add the object in THIS row to a session
             session.add(this_movie_object)
+            # repeat until done
+        
         # commit all the rows
         session.commit()
 
-    # repeat until done
 ##testing: call movie function here:
 # load_movies("./seed_data/u.item")
 
 
-
+#-------------------------#
+# populate Ratings table
+#-------------------------#
 # def load_ratings(session):
 def load_ratings(filepath):
     # use u.data
@@ -79,36 +93,41 @@ def load_ratings(filepath):
     # get a session started
     session = model.connect()
 
-    with open(filepath, 'rb') as csvfile:
+    with open(filepath, 'rb') as r_file:
         # open a file
-        ratings_data = csv.reader(csvfile, delimiter='|')
+        ratings_data = csv.reader(r_file, delimiter='\t') # this file uses TABS as spacers
         # read a line
         for row in ratings_data:
             # parse a line
-            ratings_id = row[0]
-            ratings_rating = row[2]
-            """
-            TODO:
-            figure out how to grab the user id and movie id
-            from (? objects in functions above, maybe?)
-            to put into the ratings table
-            """
+            row_movie_id = row[1]    
+            row_user_id = row[0]
+            row_rating = row[2]
 
-            # # find the corresponding movie id and user id
-            # user_id = 
-            # movie_id =          
-        #     # create an object
-        #     this_rating_object = model.Rating(id = ratings_id, movie_id = , user_id = , rating = ratings_rating)
-        #     # add the object in THIS row to a session
-        #     session.add(this_rating_object)
-        # # commit all the rows
-        # session.commit()
+            # find the corresponding movie id and user id
+            # create an object with the given seed data
+            # do not need to pass rating_id -- will auto-increment as set up in Class def
+            this_rating_object = model.Rating(movie_id = row_movie_id, 
+                                            user_id = row_user_id, this_rating = row_rating)
+            # add the object in THIS row to a session
+            session.add(this_rating_object)
+        # commit all the rows
+        session.commit()
 
 ##testing: call user function here:
-load_users("./seed_data/u.data")
+load_ratings("./seed_data/u.data")
 
+
+
+#-------------------------#
+# PULL IT ALL TOGETHER AND RUN
+#-------------------------#
 def main(session):
     # You'll call each of the load_* functions with the session as an argument
+    """
+    load_users(session)
+    load_movies(session)
+    load_ratings(session)
+    """
     pass
 
 if __name__ == "__main__":
