@@ -2,19 +2,16 @@ import model
 import csv
 from datetime import datetime
 
-
-
 #-------------------------#
 # populate Users table
 #-------------------------#
-# def load_users(session):
-def load_users(filepath):
+def load_users(session):
     # get a session started
     session = model.connect()
 
     # use u.user for ID, age, zip
     # email and password not in data set
-    with open(filepath, 'rb') as u_file:
+    with open("./seed_data/u.user", 'rb') as u_file:
         # open a file
         user_data = csv.reader(u_file, delimiter='|')
         # read a line
@@ -30,20 +27,15 @@ def load_users(filepath):
         # commit all the rows
         session.commit()
 
-##testing: call user function here:
-# load_users("./seed_data/u.user")
-
 
 #-------------------------#
 # populate Movies table
 #-------------------------#
-#def load_movies(session):
-def load_movies(filepath):
+def load_movies(session):
     # get a session started, yo.
-    session = model.connect()
 
     # use u.item
-    with open(filepath, 'rb') as m_file:
+    with open("./seed_data/u.item", 'rb') as m_file:
         # open a file
         movie_data = csv.reader(m_file, delimiter='|')
         # read a line
@@ -79,21 +71,15 @@ def load_movies(filepath):
         # commit all the rows
         session.commit()
 
-##testing: call movie function here:
-# load_movies("./seed_data/u.item")
 
 
 #-------------------------#
 # populate Ratings table
 #-------------------------#
-# def load_ratings(session):
-def load_ratings(filepath):
+def load_ratings(session):
     # use u.data
 
-    # get a session started
-    session = model.connect()
-
-    with open(filepath, 'rb') as r_file:
+    with open("./seed_data/u.data", 'rb') as r_file:
         # open a file
         ratings_data = csv.reader(r_file, delimiter='\t') # this file uses TABS as spacers
         # read a line
@@ -113,23 +99,17 @@ def load_ratings(filepath):
         # commit all the rows
         session.commit()
 
-##testing: call user function here:
-load_ratings("./seed_data/u.data")
-
-
 
 #-------------------------#
 # PULL IT ALL TOGETHER AND RUN
 #-------------------------#
 def main(session):
-    # You'll call each of the load_* functions with the session as an argument
-    """
+    # call each of the load_* functions with the session as an argument
+    
     load_users(session)
     load_movies(session)
     load_ratings(session)
-    """
-    pass
-
+    
 if __name__ == "__main__":
     s= model.connect()
     main(s)
@@ -140,10 +120,10 @@ NOTE!!!! DO NOT FORGET THIS!!!!
 *****
 in the event that db needs to be deleted and rebuilt:
 
-remember to do this in interactive python shell
+remember to do this in interactive python shell - -while in venv
 (python -i model.py)
 
 engine = create_engine("sqlite:///ratings.db", echo=True)
-Base.metadata.create_all()
+Base.metadata.create_all(engine)
 
 """
