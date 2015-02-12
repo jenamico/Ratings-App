@@ -1,7 +1,10 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
 from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship, backref 
+from sqlalchemy.orm import sessionmaker, scoped_session
+
 
 ENGINE = None
 Session = None 
@@ -37,23 +40,30 @@ class Rating(Base):
     __tablename__ = "ratings"
 
     id = Column(Integer, primary_key = True)
-    movie_id = Column(Integer, nullable = True)
-    user_id = Column(Integer, nullable = True)
-    this_rating = Column(Integer, nullable = True)
+    movie_id = Column(Integer, ForeignKey ('movies.id'), nullable = True)
+    user_id = Column(Integer, ForeignKey ('users.id'), nullable = True)
+    rating = Column(Integer, nullable = True)
+
+    user = relationship("User", backref=backref("ratings", order_by=id))
+    movie = relationship("Movie",backref=backref("movies", order_by=id))
 
     def __repr__(self):
-        return "%d, %d, %d, %d" % (self.id, self.movie_id, self.user_id, self.this_rating)
+        return "%d, %d, %d, %d" % (self.id, self.movie_id, self.user_id, self.rating)
 
 
 ### End class declarations
 
-def connect():
-    global ENGINE
-    global Session
-    ENGINE = create_engine("sqlite:///ratings.db", echo=True)
-    Session = sessionmaker(bind=ENGINE)
+# global ENGINE
+# global Session
+engine = create_engine("sqlite:///ratings.db", echo=False)
+session = scoped_session(sessionmaker(bind=engine, 
+                                      autocommit = False,
+                                      autoflush = False))
 
-    return Session()
+Base = declarative_base()
+Base.query = session.query_property()
+
+  
 
 
 def main():

@@ -93,7 +93,7 @@ def load_ratings(session):
             # create an object with the given seed data
             # do not need to pass rating_id -- will auto-increment as set up in Class def
             this_rating_object = model.Rating(movie_id = row_movie_id, 
-                                            user_id = row_user_id, this_rating = row_rating)
+                                            user_id = row_user_id, rating = row_rating)
             # add the object in THIS row to a session
             session.add(this_rating_object)
         # commit all the rows
@@ -125,5 +125,8 @@ remember to do this in interactive python shell - -while in venv
 
 engine = create_engine("sqlite:///ratings.db", echo=True)
 Base.metadata.create_all(engine)
+
+then, exit interactive python and run:
+python seed.py
 
 """
