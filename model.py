@@ -19,6 +19,9 @@ class User(Base):
     age = Column(Integer, nullable = True)
     zipcode = Column(String(15), nullable = True)
 
+    def __repr__(self):
+        return "%d, %s, %s, %d, %s" % (self.id, self.email, self.password, self.age, self.zipcode)
+
 class Movie(Base):
     __tablename__ = "movies"
 
@@ -27,6 +30,9 @@ class Movie(Base):
     release = Column(DateTime(timezone = False), nullable = True)
     imdb_url = Column(String(100))
 
+    def __repr__(self):
+        return "%d, %s, %s, %s" % (self.id, self.movie_title, self.release, self.imdb_url)
+
 class Rating(Base):
     __tablename__ = "ratings"
 
@@ -34,6 +40,9 @@ class Rating(Base):
     movie_id = Column(Integer, nullable = True)
     user_id = Column(Integer, nullable = True)
     this_rating = Column(Integer, nullable = True)
+
+    def __repr__(self):
+        return "%d, %d, %d, %d" % (self.id, self.movie_id, self.user_id, self.this_rating)
 
 
 ### End class declarations
