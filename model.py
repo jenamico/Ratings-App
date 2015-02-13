@@ -23,7 +23,8 @@ class User(Base):
     zipcode = Column(String(15), nullable = True)
 
     def __repr__(self):
-        return "%d, %s, %s, %d, %s" % (self.id, self.email, self.password, self.age, self.zipcode)
+        return "%d, %s, %s, %d, %s" % (self.id, self.email, self.password, 
+                                        self.age, self.zipcode)
 
 class Movie(Base):
     __tablename__ = "movies"
@@ -34,7 +35,8 @@ class Movie(Base):
     imdb_url = Column(String(100))
 
     def __repr__(self):
-        return "%d, %s, %s, %s" % (self.id, self.movie_title, self.release, self.imdb_url)
+        return "%d, %s, %s, %s" % (self.id, self.movie_title, self.release, 
+                                    self.imdb_url)
 
 class Rating(Base):
     __tablename__ = "ratings"
@@ -48,14 +50,15 @@ class Rating(Base):
     movie = relationship("Movie",backref=backref("movies", order_by=id))
 
     def __repr__(self):
-        return "%d, %d, %d, %d" % (self.id, self.movie_id, self.user_id, self.rating)
+        return "%d, %d, %d, %d" % (self.id, self.movie_id, self.user_id, 
+                                    self.rating)
 
 
 ### End class declarations
 
 # global ENGINE
 # global Session
-engine = create_engine("sqlite:///ratings.db", echo=False)
+engine = create_engine("sqlite:///ratings.db", echo=True)
 session = scoped_session(sessionmaker(bind=engine, 
                                       autocommit = False,
                                       autoflush = False))
